@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cake Billing Reports</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <div class="container" id="reportApp">
+      <div class="topbar">
+        <div class="brand">
+          <div class="logo" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 10c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="white" stroke-opacity="0.9" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M6 10h12l-1.2 11.2a1.6 1.6 0 0 1-1.6 1.4H8.8a1.6 1.6 0 0 1-1.6-1.4L6 10Z" stroke="white" stroke-opacity="0.9" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M9 13.5v.01M12 13.5v.01M15 13.5v.01" stroke="white" stroke-opacity="0.9" stroke-width="2.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <h1>Cake Billing Reports</h1>
+            <div class="subtitle">Daily and monthly sales summaries from saved invoices</div>
+          </div>
+        </div>
+
+        <div class="nav">
+          <a class="chipLink" href="index.html">Billing</a>
+          <a class="chipLink" href="report.html">Reports</a>
+          <button class="chipLink no-print" id="printReportBtn" type="button">Print</button>
+          <button class="chipLink no-print" id="themeToggleBtn" type="button">Theme</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <p class="cardTitle">Report Filters</p>
+
+          <div class="twoCols">
+            <div class="field">
+              <label for="reportMode">Report Mode</label>
+              <select id="reportMode">
+                <option value="daily" selected>Daily</option>
+                <option value="monthly">Monthly</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="muted">Export</label>
+              <button class="btn btnPrimary" id="downloadReportCsvBtn" type="button" style="width:100%;">Download CSV</button>
+            </div>
+          </div>
+
+          <div id="dailyControls">
+            <div class="divider"></div>
+            <div class="twoCols">
+              <div class="field">
+                <label for="startDate">Start Date</label>
+                <input type="date" id="startDate" />
+              </div>
+              <div class="field">
+                <label for="endDate">End Date</label>
+                <input type="date" id="endDate" />
+              </div>
+            </div>
+          </div>
+
+          <div id="monthlyControls" style="display:none;">
+            <div class="divider"></div>
+            <div class="twoCols">
+              <div class="field">
+                <label for="monthFrom">From Month</label>
+                <input type="month" id="monthFrom" />
+              </div>
+              <div class="field">
+                <label for="monthTo">To Month</label>
+                <input type="month" id="monthTo" />
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="footerHint">All data comes from browser localStorage.</div>
+        </div>
+
+        <div class="rightStack">
+          <div class="card">
+            <p class="cardTitle">KPIs</p>
+            <div class="totals" style="grid-template-columns:1fr 1fr;">
+              <div class="totalItem">
+                <div class="totalLabel">Invoices</div>
+                <div class="totalValue mono" id="kpiInvoices">0</div>
+              </div>
+              <div class="totalItem">
+                <div class="totalLabel">Sales</div>
+                <div class="totalValue mono" id="kpiSales">0.00</div>
+              </div>
+              <div class="totalItem">
+                <div class="totalLabel">Avg / Invoice</div>
+                <div class="totalValue mono" id="kpiAvg">0.00</div>
+              </div>
+              <div class="totalItem">
+                <div class="totalLabel">Discount</div>
+                <div class="totalValue mono" id="kpiDiscount">0.00</div>
+              </div>
+              <div class="totalItem">
+                <div class="totalLabel">Tax</div>
+                <div class="totalValue mono" id="kpiTax">0.00</div>
+              </div>
+              <div class="totalItem">
+                <div class="totalLabel"> </div>
+                <div class="totalValue mono" style="opacity:.0;">.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <p class="cardTitle">Report Table</p>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Period</th>
+                  <th>Invoices</th>
+                  <th>Sales</th>
+                  <th>Discount</th>
+                  <th>Tax</th>
+                </tr>
+              </thead>
+              <tbody id="reportTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="toastWrap"></div>
+    </div>
+
+    <script src="assets/report.js"></script>
+  </body>
+</html>
+

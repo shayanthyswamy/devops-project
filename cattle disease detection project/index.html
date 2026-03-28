@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cake Billing System</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <div class="container" id="invoiceApp">
+      <div class="topbar">
+        <div class="brand">
+          <div class="logo" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 10c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="white" stroke-opacity="0.9" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M6 10h12l-1.2 11.2a1.6 1.6 0 0 1-1.6 1.4H8.8a1.6 1.6 0 0 1-1.6-1.4L6 10Z" stroke="white" stroke-opacity="0.9" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M9 13.5v.01M12 13.5v.01M15 13.5v.01" stroke="white" stroke-opacity="0.9" stroke-width="2.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <h1>Cake Billing System</h1>
+            <div class="subtitle">Create invoices and view daily/monthly reports</div>
+          </div>
+        </div>
+
+        <div class="nav">
+          <a class="chipLink" href="index.html">Billing</a>
+          <a class="chipLink" href="report.html">Reports</a>
+          <button class="chipLink no-print" id="printPageBtn" type="button">Print</button>
+          <button class="chipLink no-print" id="themeToggleBtn" type="button">Theme</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <p class="cardTitle">Create Invoice</p>
+
+          <div class="twoCols">
+            <div class="field">
+              <label for="invoiceDate">Invoice Date</label>
+              <input type="date" id="invoiceDate" />
+            </div>
+            <div class="field">
+              <label for="taxRatePct">Tax Rate (%)</label>
+              <input type="number" id="taxRatePct" min="0" step="0.01" value="0" />
+            </div>
+          </div>
+
+          <div class="twoCols">
+            <div class="field">
+              <label for="customerName">Customer Name</label>
+              <input type="text" id="customerName" placeholder="e.g., Ahmed" />
+            </div>
+            <div class="field">
+              <label for="customerPhone">Customer Phone (optional)</label>
+              <input type="text" id="customerPhone" placeholder="e.g., 0123456789" />
+            </div>
+          </div>
+
+          <div class="twoCols">
+            <div class="field">
+              <label for="discountType">Discount Type</label>
+              <select id="discountType">
+                <option value="amount" selected>Amount</option>
+                <option value="percent">Percent (%)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="discountValue">Discount Value</label>
+              <input type="number" id="discountValue" min="0" step="0.01" value="0" />
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <p class="cardTitle" style="margin-bottom:10px;">Add Cake Items</p>
+
+          <div class="twoCols">
+            <div class="field">
+              <label for="cakeName">Cake Name</label>
+              <input type="text" id="cakeName" placeholder="e.g., Chocolate Cake" />
+            </div>
+            <div class="field">
+              <label for="unitPrice">Unit Price</label>
+              <input type="number" id="unitPrice" min="0" step="0.01" placeholder="e.g., 250" />
+            </div>
+          </div>
+
+          <div class="twoCols">
+            <div class="field">
+              <label for="qty">Quantity</label>
+              <input type="number" id="qty" min="1" step="1" value="1" />
+            </div>
+            <div class="field" style="display:flex; align-items:flex-end;">
+              <button class="btn btnPrimary" id="addItemBtn" type="button" style="width:100%;">Add Item</button>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Cake</th>
+                  <th>Unit</th>
+                  <th>Qty</th>
+                  <th>Line total</th>
+                  <th style="text-align:right;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="itemsTbody"></tbody>
+            </table>
+            <div class="footerHint">Items count: <span class="mono" id="itemsCount">0</span></div>
+          </div>
+
+          <div style="margin-top:14px;" class="totals">
+            <div class="totalItem">
+              <div class="totalLabel">Subtotal</div>
+              <div class="totalValue mono" id="subtotalValue">0.00</div>
+            </div>
+            <div class="totalItem">
+              <div class="totalLabel">Discount</div>
+              <div class="totalValue mono" id="discountAmountValue">0.00</div>
+            </div>
+            <div class="totalItem">
+              <div class="totalLabel">Tax</div>
+              <div class="totalValue mono" id="taxValue">0.00</div>
+            </div>
+            <div class="totalItem" style="border-color: rgba(110,231,255,.40); background: rgba(110,231,255,.08);">
+              <div class="totalLabel">Grand total</div>
+              <div class="totalValue mono" id="grandTotalValue">0.00</div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="btnRow">
+            <button class="btn btnPrimary" id="saveInvoiceBtn" type="button">Save Invoice</button>
+            <button class="btn" id="clearBtn" type="button">Clear Form</button>
+            <button class="btn" id="downloadCsvBtn" type="button">Export CSV</button>
+          </div>
+          <div class="footerHint">Saved invoices are stored in your browser only (localStorage).</div>
+        </div>
+
+        <div class="rightStack">
+          <div class="card">
+            <p class="cardTitle">Recent Invoices</p>
+            <div id="invoiceList" class="invoiceList"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="modalOverlay" class="modalOverlay hidden">
+        <div class="modal">
+          <div id="modalBody" class="modalBody"></div>
+        </div>
+      </div>
+
+      <div class="toastWrap"></div>
+    </div>
+
+    <script src="assets/app.js"></script>
+  </body>
+</html>
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cake Billing System</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <div class="toastWrap"></div>
+
+    <div class="container">
+      <div class="topbar">
+        <div class="brand">
+          <div class="logo" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M7 21h10M8 21c0-4 1.8-7.2 4-9 2.2 1.8 4 5 4 9"
+                stroke="rgba(234,241,255,.95)"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+              <path
+                d="M6.5 9.5c2.2-.8 4.5-.8 6.5 0 2 .8 4.3.8 6.5 0"
+                stroke="rgba(110,231,255,.95)"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+              <path
+                d="M12 3c-1 2-2 3.5-3 4.5h6C14 6.5 13 5 12 3Z"
+                fill="rgba(167,139,250,.85)"
+              />
+            </svg>
+          </div>
+          <div>
+            <h1>Cake Billing System</h1>
+            <div class="subtitle">Create invoices + view daily/monthly reports</div>
+          </div>
+        </div>
+
+        <div class="nav">
+          <a class="chipLink" href="report.html">Reports</a>
+          <button class="chipLink" id="downloadCsvBtn" type="button">Export CSV</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card" id="invoiceApp">
+          <p class="cardTitle">Create Invoice</p>
+
+          <div class="twoCols">
+            <div class="field">
+              <label for="customerName">Customer name</label>
+              <input id="customerName" placeholder="e.g., Shayan" />
+            </div>
+            <div class="field">
+              <label for="customerPhone">Phone (optional)</label>
+              <input id="customerPhone" placeholder="e.g., 9876543210" inputmode="tel" />
+            </div>
+          </div>
+
+          <div class="twoCols">
+            <div class="field">
+              <label for="invoiceDate">Invoice date</label>
+              <input id="invoiceDate" type="date" />
+            </div>
+            <div class="field">
+              <label>Pricing options</label>
+              <div class="row" style="gap:10px; align-items:flex-end;">
+                <div style="flex:1;">
+                  <label for="taxRatePct" style="margin-bottom:6px;">Tax rate %</label>
+                  <input id="taxRatePct" type="number" step="0.01" min="0" value="0" />
+                </div>
+                <div style="flex:1;">
+                  <label for="discountType" style="margin-bottom:6px;">Discount</label>
+                  <select id="discountType">
+                    <option value="amount">Amount</option>
+                    <option value="percent">Percent</option>
+                  </select>
+                </div>
+                <div style="flex:1;">
+                  <label for="discountValue" style="margin-bottom:6px;">Value</label>
+                  <input id="discountValue" type="number" step="0.01" min="0" value="0" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="card" style="background: rgba(255,255,255,.02); box-shadow:none; margin-bottom:14px;">
+            <p class="cardTitle">Add Cake Item</p>
+            <div class="twoCols">
+              <div class="field">
+                <label for="cakeName">Cake name</label>
+                <input id="cakeName" placeholder="e.g., Chocolate Cake" />
+              </div>
+              <div class="field">
+                <label for="unitPrice">Unit price</label>
+                <input id="unitPrice" type="number" step="0.01" min="0" placeholder="e.g., 250" />
+              </div>
+            </div>
+
+            <div class="twoCols">
+              <div class="field">
+                <label for="qty">Quantity</label>
+                <input id="qty" type="number" step="1" min="1" value="1" />
+              </div>
+              <div class="field">
+                <label>Action</label>
+                <div class="btnRow">
+                  <button class="btn btnPrimary" id="addItemBtn" type="button">Add item</button>
+                  <button class="btn" id="clearBtn" type="button">Clear invoice</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="row" style="justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+              <div class="muted" style="font-size:13px;">Items (<span id="itemsCount">0</span>)</div>
+              <div class="small muted">Press Enter to add quickly</div>
+            </div>
+
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Cake</th>
+                  <th>Unit</th>
+                  <th>Qty</th>
+                  <th>Line total</th>
+                  <th style="text-align:right;">&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody id="itemsTbody"></tbody>
+            </table>
+          </div>
+
+          <div style="margin-top:14px;" class="totals">
+            <div class="totalItem">
+              <div class="totalLabel">Subtotal</div>
+              <div class="totalValue mono" id="subtotalValue">0.00</div>
+            </div>
+            <div class="totalItem">
+              <div class="totalLabel">Discount</div>
+              <div class="totalValue mono" id="discountValue">0.00</div>
+            </div>
+            <div class="totalItem">
+              <div class="totalLabel">Tax</div>
+              <div class="totalValue mono" id="taxValue">0.00</div>
+            </div>
+            <div class="totalItem" style="border-color: rgba(110,231,255,.40); background: rgba(110,231,255,.08);">
+              <div class="totalLabel">Grand total</div>
+              <div class="totalValue mono" id="grandTotalValue">0.00</div>
+            </div>
+          </div>
+
+          <div class="btnRow" style="margin-top:14px;">
+            <button class="btn btnPrimary" id="saveInvoiceBtn" type="button">Save invoice</button>
+          </div>
+          <div class="footerHint">Saved invoices appear in the list and in <code>report.html</code>.</div>
+        </div>
+
+        <div class="rightStack">
+          <div class="card">
+            <p class="cardTitle">Recent Invoices</p>
+            <div class="invoiceList" id="invoiceList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="modalOverlay" class="modalOverlay hidden" style="display:none;">
+      <div class="modal">
+        <div class="modalBody" id="modalBody"></div>
+      </div>
+    </div>
+
+    <script defer src="assets/app.js"></script>
+  </body>
+</html>
+
